@@ -112,6 +112,7 @@ deviceSchema.index({
 });
 // default sort 
 deviceSchema.index({type:1,application:1,name:1});
+deviceSchema.index({location:'2dsphere'});
 
 // initialize the pagination plugin
 deviceSchema.plugin(mongoosePaginate);
