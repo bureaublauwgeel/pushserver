@@ -53,7 +53,15 @@ function GcmPushManager(app) {
 
     messageOptions.collapseKey = this.application.name;
     push = new gcm.Message(messageOptions);
-    push.addDataWithObject(custom);
+
+    var payload = _.omit(custom, ['message', '_ios', '_android']);
+    var androidOptions = custom['_android'];
+
+    if (_.has(androidOptions, 'title')) {
+      payload['title'] = title;
+    }
+
+    push.addDataWithObject(payload);
 
     debug("GCM : %d tokens to send.", tokens.length);
 

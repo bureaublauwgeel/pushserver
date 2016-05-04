@@ -5,7 +5,8 @@ var debug = require('debug')('pushserver:apns-push'),
   apn = require('apn'),
   config = require('config').get('pushserver'),
   device = mongoose.model('devices'),
-  util = require('util');
+  util = require('util'),
+  _ = require('lodash');
 
 function ApnPushManager(app) {
   this.application = app;
@@ -148,12 +149,37 @@ function ApnPushManager(app) {
     // connect to apple server, using the app's cred & key
     console.log("APNS : Sending %d tokens.", tokens.length);
 
-    var note = new apn.notification(custom);
-    note.setAlertText(message);
-    note.setExpiry(Math.floor(Date.now() / 1000) + 3600); // Expires 1 hour from now.
+    var note = new apn.notification(_.omit(custom, ['message', '_ios', '_android']));
+    var iosOptions = custom['_ios'];
 
-    note.setBadge(1);
-    note.sound = "default";
+    if (_.has(iosOptions, 'expiry')) {
+      note.setExpiry(iosOptions['expiry']);
+    } else {
+      note.setExpiry(Math.floor(Date.now() / 1000) + 3600); // Expires 1 hour from now.
+    }
+
+    if (_.has(iosOptions, 'priority')) {
+      note.setPriority(iosOptions['priority']);
+    }
+
+    note.setAlertText(message);
+
+    if (_.has(iosOptions, 'badge')) {
+      note.setBadge(iosOptions['badge']);
+    } else {
+      note.setBadge(1);
+    }
+
+    if (_.has(iosOptions, 'sound')) {
+      note.setSound(iosOptions['sound']);
+    } else {
+      note.setSound('default');
+    }
+
+    if (_.has(iosOptions, 'contentAvailable')) {
+      note.setContentAvailable(iosOptions['contentAvailable']);
+    }
+
     this.service.pushNotification(note, tokens);
   };
 
