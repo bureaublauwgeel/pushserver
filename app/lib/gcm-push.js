@@ -58,7 +58,7 @@ function GcmPushManager(app) {
     var androidOptions = custom['_android'];
 
     if (_.has(androidOptions, 'title')) {
-      payload['title'] = title;
+      payload['title'] = androidOptions['title'];
     }
 
     push.addDataWithObject(payload);
