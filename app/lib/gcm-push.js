@@ -54,7 +54,7 @@ function GcmPushManager(app) {
     messageOptions.collapseKey = this.application.name;
     push = new gcm.Message(messageOptions);
 
-    var payload = _.omit(custom, ['message', '_ios', '_android']);
+    var payload = _.omit(custom, ['_ios', '_android']);
     var androidOptions = custom['_android'];
 
     if (_.has(androidOptions, 'title')) {
