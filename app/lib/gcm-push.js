@@ -57,6 +57,14 @@ function GcmPushManager(app) {
     var payload = _.omit(custom, ['_ios', '_gcm']);
     var gcmOptions = custom['_gcm'];
 
+    for (var key in gcmOptions) {
+      if (!gcmOptions.hasOwnProperty(key)) {
+        continue;
+      }
+
+      payload[key] = gcmOptions[key];
+    }
+
     if (_.has(gcmOptions, 'title')) {
       payload['title'] = gcmOptions['title'];
     }
